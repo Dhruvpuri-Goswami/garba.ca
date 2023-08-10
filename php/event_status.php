@@ -152,7 +152,7 @@ mysqli_close($conn);
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">CHECK STATUS</h6>
                         <a class="collapse-item" href="./event_status.php">EVENT STATUS</a>
-<a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
+                        <a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
                     </div>
                 </div>
             </li>
@@ -270,27 +270,39 @@ mysqli_close($conn);
                                         </tr>
                                     </thead>
                                     <tbody>
-    <?php $count = 1; ?>
-    <?php foreach ($requests as $request): ?>
-        <tr>
-            <td><?php echo $count++; ?></td>
-            <td><?php echo $request['first_name']; ?></td>
-            <td><?php echo $request['last_name']; ?></td>
-            <td><?php echo $request['email_id']; ?></td>
-            <td><?php echo $request['phone_no']; ?></td>
-            <td><?php echo $request['description']; ?></td>
-            <td>
-                <?php 
-                if ($request['is_registered'] == 1) {
-                    echo '<button type="button" class="btn btn-success btn-sm btn-nocursor">Registered</button>';
-                } else {
-                    echo '<button type="button" style="color: black;" class="btn btn-warning btn-sm btn-nocursor">Pending</button>';
-                }
-                ?>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-</tbody>
+                                        <?php $count = 1; ?>
+                                        <?php foreach ($requests as $request): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo $count++; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['first_name']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['last_name']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['email_id']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['phone_no']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['description']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    if ($request['is_registered'] == 1) {
+                                                        echo '<button type="button" class="btn btn-success btn-sm btn-nocursor">Registered</button>';
+                                                    } else {
+                                                        echo '<button type="button" style="color: black;" class="btn btn-warning btn-sm btn-nocursor">Pending</button>';
+                                                    }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
 
                                 </table>
                             </div>

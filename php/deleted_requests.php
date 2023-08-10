@@ -149,7 +149,7 @@ mysqli_close($conn);
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">CHECK STATUS</h6>
                         <a class="collapse-item" href="./event_status.php">EVENT STATUS</a>
-<a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
+                        <a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
                     </div>
                 </div>
             </li>

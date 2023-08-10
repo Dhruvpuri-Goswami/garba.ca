@@ -149,7 +149,7 @@ mysqli_close($conn);
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">CHECK STATUS</h6>
                         <a class="collapse-item" href="./event_status.php">EVENT STATUS</a>
-<a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
+                        <a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
                     </div>
                 </div>
             </li>
@@ -255,35 +255,48 @@ mysqli_close($conn);
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <thead>
-    <tr>
-        <th>Event ID</th>
-        <th>Event Name</th>
-        <th>Host Name</th>
-        <th>Date</th>
-        <th>Venue</th>
-        <th>Description</th>
-        <th>Action</th>
-    </tr>
-</thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Event ID</th>
+                                            <th>Event Name</th>
+                                            <th>Host Name</th>
+                                            <th>Date</th>
+                                            <th>Venue</th>
+                                            <th>Description</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
 
 
-<tbody>
-    <?php $count = 1; ?>
-    <?php foreach ($requests as $event): ?>
-        <tr>
-            <td><?php echo $event['event_id']; ?></td>
-            <td><?php echo $event['event_name']; ?></td>
-            <td><?php echo $event['event_host']; ?></td>
-            <td><?php echo $event['event_start_date']; ?></td>
-            <td><?php echo $event['event_venue']; ?></td>
-            <td><?php echo $event['event_desc']; ?></td>
-            <td>
-                <button onclick="deleteEvent(<?php echo $event['event_id']; ?>)" class="btn btn-danger btn-sm">Delete</button>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
+                                    <tbody>
+                                        <?php $count = 1; ?>
+                                        <?php foreach ($requests as $event): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo $event['event_id']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $event['event_name']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $event['event_host']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $event['event_start_date']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $event['event_venue']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $event['event_desc']; ?>
+                                                </td>
+                                                <td>
+                                                    <button onclick="deleteEvent(<?php echo $event['event_id']; ?>)"
+                                                        class="btn btn-danger btn-sm">Delete</button>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
 
                                 </table>
                             </div>
@@ -345,33 +358,33 @@ mysqli_close($conn);
     <script src="../js/demo/chart-pie-demo.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        
+
         function deleteEvent(eventId) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'No, cancel!',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: 'delete_events.php',
-                method: 'POST',
-                data: { id: eventId },
-                success: function (response) {
-                    Swal.fire('Deleted!', 'The event has been deleted.', 'success').then(() => {
-                        location.reload();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'delete_events.php',
+                        method: 'POST',
+                        data: { id: eventId },
+                        success: function (response) {
+                            Swal.fire('Deleted!', 'The event has been deleted.', 'success').then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function (error) {
+                            Swal.fire('Error!', 'Something went wrong.', 'error');
+                        }
                     });
-                },
-                error: function (error) {
-                    Swal.fire('Error!', 'Something went wrong.', 'error');
                 }
-            });
+            })
         }
-    })
-}
 
     </script>
 

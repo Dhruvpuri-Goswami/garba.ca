@@ -4,12 +4,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    if($username == "admin" && $password == "admin") {
+    if ($username == "admin" && $password == "admin") {
         $_SESSION["username"] = $username;
-        header("Location: admin_dashboard.php"); 
+        header("Location: admin_dashboard.php");
         exit();
     } else {
-        echo '<script>alert("Incorrect username or password!")</script>'; 
+        echo '<script>alert("Incorrect username or password!")</script>';
     }
 }
 ?>
@@ -55,8 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="flex items-center justify-between">
                 <button type="submit"
                     class="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Login</button>
-                <a href="#"
-                    class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Forgot Password?</a>
+                <a href="#" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Forgot Password?</a>
             </div>
         </form>
     </div>

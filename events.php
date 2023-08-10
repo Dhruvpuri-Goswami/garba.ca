@@ -66,10 +66,18 @@
 
                   <!-- text section -->
                   <div class="py-4 font-[Quicksand]">
-                    <h3 class="text-2xl font-semibold mb-1 ">  <?php echo $row['event_name']; ?></h3>
-                    <p class="text-sm text-gray-500 mb-1"> <i class="fa-solid fa-location-dot"></i>  <?php echo $row['event_venue']; ?></p>
-                    <p class="text-sm text-gray-500 mb-1"> <i class="fa-solid fa-calendar-days"></i>  <?php echo $row['event_start_date']."-".$row['event_end_date']; ?></p>
-                    <p class="text-sm text-gray-500 mb-1"><i class="fa-solid fa-clock"></i> <?php echo $row['event_start_time']."-".$row['event_end_time']; ?></p>
+                    <h3 class="text-2xl font-semibold mb-1 ">
+                      <?php echo $row['event_name']; ?>
+                    </h3>
+                    <p class="text-sm text-gray-500 mb-1"> <i class="fa-solid fa-location-dot"></i>
+                      <?php echo $row['event_venue']; ?>
+                    </p>
+                    <p class="text-sm text-gray-500 mb-1"> <i class="fa-solid fa-calendar-days"></i>
+                      <?php echo $row['event_start_date'] . "-" . $row['event_end_date']; ?>
+                    </p>
+                    <p class="text-sm text-gray-500 mb-1"><i class="fa-solid fa-clock"></i>
+                      <?php echo $row['event_start_time'] . "-" . $row['event_end_time']; ?>
+                    </p>
                   </div>
 
                   <a href="mainCard.php?event_id=<?php echo $row['event_id']; ?>"

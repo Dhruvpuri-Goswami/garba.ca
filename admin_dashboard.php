@@ -131,7 +131,8 @@ mysqli_close($conn);
                     <i class="fas fa-fw fa-folder"></i>
                     <span>REQUESTS</span>
                 </a>
-                <div id="collapsePages2" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div id="collapsePages2" class="collapse" aria-labelledby="headingPages"
+                    data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">REQUESTS HISTORY</h6>
                         <a class="collapse-item" href="./php/all_requests.php">REQUESTS HISTORY</a>
@@ -301,7 +302,9 @@ mysqli_close($conn);
                             <div class="card text-white bg-gradient-dark mb-3">
                                 <div class="card-body">
                                     <h5 class="card-title">Registered Events</h5>
-                                    <p class="card-text display-4"><?php echo $total_event; ?></p>
+                                    <p class="card-text display-4">
+                                        <?php echo $total_event; ?>
+                                    </p>
                                     <a href="./php/event_status.php" class="btn btn-light">View All</a>
                                 </div>
                             </div>
@@ -367,7 +370,8 @@ mysqli_close($conn);
                                     </tbody>
                                 </table>
                                 <div class="d-flex justify-content-end">
-                                    <a href="./php/all_requests.php" class="btn bg-gradient-primary text-white">Show All</a>
+                                    <a href="./php/all_requests.php" class="btn bg-gradient-primary text-white">Show
+                                        All</a>
                                 </div>
                             </div>
                         </div>
