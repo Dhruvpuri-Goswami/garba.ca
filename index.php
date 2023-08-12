@@ -12,6 +12,7 @@ $result = mysqli_query($conn, $sql);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Pacifico&family=Quicksand&display=swap"
@@ -40,7 +41,8 @@ $result = mysqli_query($conn, $sql);
     <div class="absolute w-full h-[85vh] bg-opacity-80 bg-black  text-white">
       <nav class="flex justify-between mx-8 py-5 items-center">
         <div>
-          <h2 class="text-3xl font-[Quicksand] font-bold">Garba</h2>
+          <a href="index.php"><h2 class="text-3xl font-[Quicksand] font-bold">Garba</h2></a>
+          
         </div>
         <div class="flex gap-4">
           <a href="login.php"
@@ -61,9 +63,11 @@ $result = mysqli_query($conn, $sql);
         </div>
         <div class=" w-[90vw] h-36 md:w-[60vw] md:h-14 flex flex-col md:flex-row ">
           <input
+            id="inputFieldIndex"
             class=" text-center md:text-left md:pl-8 h-16 md:h-full font-[Quicksand] font-bold text-[1.2em] md:text-[1.5em] outline-none w-full md:rounded-tl-md md:rounded-bl-md bg-white text-black"
             placeholder="Search Event" type="text">
           <button
+            onclick="sendValue()"
             class="py-2  w-32 mx-auto my-4 rounded-full md:my-0 md:rounded-none bg-yellow-500 md:rounded-tr-md md:rounded-br-md md:px-4 md:py-0 md:h-full">Search</button>
         </div>
       </div>
@@ -217,17 +221,16 @@ $result = mysqli_query($conn, $sql);
                   <h5 class="text-lg mt-0 mb-2 text-blueGray-600">
                     spread our culture across the world!
                   </h5>
-                  <div class="mt-6 lg:mb-0 mb-6">
-                    <button
-                      class="bg-white text-lightBlue-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
-                      type="button">
-                      <i class="fas fa-twitter"></i></button><button
-                      class="bg-white text-lightBlue-600 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
-                      type="button">
-                      <i class="fas fa-facebook"></i></button><button
-                      class="bg-white text-pink-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
-                      type="button">
-                      <i class="fa fa-instagram"></i></button>
+                  <div class="mt-6 lg:mb-0 mb-6 flex gap-4 text-4xl">
+                    <button>
+                    <i class="fa-brands fa-twitter" style="color: #005eff;"></i>
+                    </button>
+                    <button>
+                    <i class="fa-brands fa-instagram" style="color: #f23a7b;"></i>
+                    </button>
+                    <button>
+                    <i class="fa-brands fa-facebook" style="color: #1a6eff;"></i>
+                    </button>
                   </div>
                 </div>
                 <div class="w-full lg:w-6/12 px-4">
@@ -235,15 +238,6 @@ $result = mysqli_query($conn, $sql);
                     <div class="w-full lg:w-4/12 px-4 ml-auto">
                       <span class="block uppercase text-blueGray-500 text-sm font-semibold mb-2">Useful Links</span>
                       <ul class="list-unstyled">
-                        <li>
-                          <a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-                            href="https://www.creative-tim.com/presentation?ref=njs-profile">About Us</a>
-                        </li>
-                        <li>
-                          <a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
-                            href="https://blog.creative-tim.com?ref=njs-profile">Blog</a>
-                        </li>
-                        <li>
                           <a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
                             href="https://www.github.com/creativetimofficial?ref=njs-profile">Events</a>
                         </li>
@@ -331,6 +325,11 @@ $result = mysqli_query($conn, $sql);
 </script>
 
 <script src="./js/searchScript.js"></script>
-
+<script>
+  function sendValue() {
+    var inputValue = document.getElementById("inputFieldIndex").value;
+    window.location.href = "events.php?value=" + encodeURIComponent(inputValue);
+}
+</script>
 
 </html>

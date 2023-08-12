@@ -78,7 +78,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="absolute w-full h-[100vh] bg-opacity-80 bg-black  text-white">
       <nav class="flex justify-between mx-8 py-5 items-center">
         <div>
-          <h2 class="text-3xl font-[Quicksand] font-bold">Garba</h2>
+          <a href="/">
+            <h2 class="text-3xl font-[Quicksand] font-bold">Garba</h2>
+          </a>
         </div>
         <div class="flex gap-4">
           <a class="transition-all duration-100 py-1 px-2 md:px-5 border border-gray-400 cursor-pointer hover:border-white box-border text-sm md:text-lg"
