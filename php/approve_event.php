@@ -7,7 +7,7 @@ if (isset($_GET['event_id'])) {
 
     require 'connection.php';
 
-    $status = '-1';
+    $status = '1';
 
     $sql = "UPDATE tbl_event SET status = ? WHERE event_id = ?";
     $stmt = mysqli_prepare($conn, $sql);
@@ -16,7 +16,7 @@ if (isset($_GET['event_id'])) {
 
     if (mysqli_stmt_execute($stmt)) {
         echo "<script>
-            alert('Declined Successfully !!!');
+            alert('Approved Successfully !!!');
             window.location.href='approve_requests.php'; 
         </script>";
     } else {

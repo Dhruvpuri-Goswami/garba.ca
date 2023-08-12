@@ -13,7 +13,7 @@ $username = $_SESSION["username"];
 // Connect to the database and fetch request details
 require 'connection.php';
 
-$sql = "SELECT * FROM tbl_request WHERE status='0'";
+$sql = "SELECT * FROM tbl_event WHERE status='0'";
 $result = mysqli_query($conn, $sql);
 
 
@@ -22,7 +22,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $requests[] = $row;
 }
 
-mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,6 +43,7 @@ mysqli_close($conn);
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
+
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
@@ -57,7 +57,7 @@ mysqli_close($conn);
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="admin_dashboard.php">
                 <div class="sidebar-brand-text mx-3">Garba</div>
             </a>
 
@@ -66,7 +66,7 @@ mysqli_close($conn);
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../admin_dashboard.php">
+                <a class="nav-link" href="./admin_dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -79,7 +79,7 @@ mysqli_close($conn);
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Requests
+                Events
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
@@ -87,15 +87,13 @@ mysqli_close($conn);
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>APPROVE REQUESTS</span>
+                    <span>APPROVE EVENTS</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">APROVE REQUESTS</h6>
-                        <a class="collapse-item" href="./approve_requests.php">APPROVE REQUESTS</a>
-                        <a class="collapse-item" href="./accepted_requests.php">ACCEPTED REQUESTS</a>
-
-                        <a class="collapse-item" href="./deleted_requests.php">DELETED REQUESTS</a>
+                        <h6 class="collapse-header">APROVE EVENTS</h6>
+                        <a class="collapse-item" href="./approve_requests.php">APPROVE EVENT</a>
+                        <a class="collapse-item" href="./accepted_requests.php">ACCEPTED EVENTS</a>
                     </div>
                 </div>
             </li>
@@ -103,32 +101,6 @@ mysqli_close($conn);
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Requests
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages2"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>REQUESTS</span>
-                </a>
-                <div id="collapsePages2" class="collapse" aria-labelledby="headingPages"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">REQUESTS HISTORY</h6>
-                        <a class="collapse-item" href="./all_requests.php">REQUESTS HISTORY</a>
-                    </div>
-                </div>
-            </li>
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -137,21 +109,38 @@ mysqli_close($conn);
 
 
             <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
+                        <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
-                    <span>CHECK STATUS</span>
+                    <span>CHECK HISTORY</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">CHECK STATUS</h6>
-                        <a class="collapse-item" href="./event_status.php">EVENT STATUS</a>
-                        <a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
+                        <h6 class="collapse-header">CHECK HISTORY</h6>
+                        <a class="collapse-item" href="./all_requests.php">EVENT HISTORY</a>
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="featured_events.php">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>FEATURE EVENTS</span>
+                </a>
+</li>
+<li class="nav-item">
+                <a class="nav-link" href="give_away.php">
+                    <i class="fas fa-fw fa-donate"></i>
+                    <span>GIVE AWAY</span>
+                </a>
+</li>
+<li class="nav-item">
+                <a class="nav-link" href="give_away_result.php">
+                    <i class="fas fa-fw fa-donate"></i>
+                    <span>GIVE AWAY RESULT</span>
+                </a>
+</li>
 
             <!-- Nav Item - Charts -->
 
@@ -230,7 +219,8 @@ mysqli_close($conn);
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="../logout.php" data-toggle="modal"
+                                    data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -248,7 +238,7 @@ mysqli_close($conn);
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h1 class="h3 mb-0 text-gray-800"><b>Approve Requests</b></h1>
+                            <h1 class="h3 mb-0 text-gray-800"><b>History</b></h1>
 
                         </div>
                         <div class="card-body">
@@ -256,11 +246,16 @@ mysqli_close($conn);
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
+                                            <th>No.</th>
+                                            <th>Event Name</th>
+                                            <th>Location</th>
+                                            <th>Artist Name</th>
+                                            <th>Sponsors</th>
+                                            <th>Contact No.</th>
+                                            <th>Email ID</th>
+                                            <th>Date</th>
+                                            <th>Time</th>
+                                            <th>Price</th>
                                             <th>Description</th>
                                             <th>Action</th>
                                         </tr>
@@ -273,36 +268,91 @@ mysqli_close($conn);
                                                     <?php echo $count++; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $request['first_name']; ?>
+                                                    <?php echo $request['event_name']; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $request['last_name']; ?>
+                                                    <?php echo $request['event_venue']; ?>
                                                 </td>
-                                                <td>
-                                                    <?php echo $request['email_id']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['phone_no']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['description']; ?>
-                                                </td>
-                                                <td>
-                                                    <button type="button" style="color: black;"
-                                                        class="btn btn-success btn-sm btn-nocursor"
-                                                        data-id="<?php echo $request['request_id']; ?>"
-                                                        onclick="approveRequest(this)">Approve</button>
-                                                    <button type="button" style="color: black;"
-                                                        class="btn btn-danger btn-sm btn-nocursor"
-                                                        data-id="<?php echo $request['request_id']; ?>"
-                                                        onclick="deniedRequest(this)">Denied</button>
+                                                <!-- Status Field -->
 
+                                                <!-- Artist Name -->
+                                                <td>
+                                                    <?php
+                                                    $eventid = $request['event_id'];
+                                                    $artist_sql = "SELECT artist_name FROM tbl_artist WHERE event_id=?";
+                                                    $stmt = $conn->prepare($artist_sql);
+                                                    $stmt->bind_param("i", $eventid); // Assuming event_id is an integer
+                                                    $stmt->execute();
+                                                    $result = $stmt->get_result();
+
+                                                    $artist_names = [];
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        $artist_names[] = $row['artist_name'];
+                                                    }
+                                                    $stmt->close();
+
+                                                    // Convert the array of artist names into a comma-separated string
+                                                    $artist_string = implode(', ', $artist_names);
+
+                                                    echo $artist_string;
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['event_sponsor']; ?>
+                                                </td>
+                                                <!-- Contact No. -->
+                                                <td>
+                                                    <?php
+                                                    $eventid = $request['event_id'];
+                                                    $contact_sql = "SELECT contact_no FROM tbl_contact WHERE event_id=?";
+                                                    $stmt = $conn->prepare($contact_sql);
+                                                    $stmt->bind_param("i", $eventid); // Assuming event_id is an integer
+                                                    $stmt->execute();
+                                                    $result = $stmt->get_result();
+
+                                                    $contacts = [];
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        $contacts[] = $row['contact_no'];
+                                                    }
+                                                    $stmt->close();
+
+                                                    // Convert the array of contacts into a comma-separated string
+                                                    $contact = implode(', ', $contacts);
+
+                                                    echo $contact;
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['gmail']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['event_start_date'] . " To " . $request['event_end_date']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['event_start_time'] . " To " . $request['event_end_time']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo "$ " . $request['event_price']; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $request['event_desc']; ?>
+                                                </td>
+                                                <td>
+                                                    <a href="approve_event.php?event_id=<?php echo $eventid; ?>"
+                                                        class="btn btn-success btn-sm mr-2">
+                                                        Approve
+                                                    </a>
+                                                    <a href="delete_events.php?event_id=<?php echo $eventid; ?>"
+                                                        class="btn btn-danger btn-sm mt-2">
+                                                        Delete
+                                                    </a>
 
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -338,7 +388,7 @@ mysqli_close($conn);
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -364,47 +414,50 @@ mysqli_close($conn);
     <script>
         function approveRequest(button) {
             var requestId = $(button).data('id');
-            var userEmail = $(button).closest('tr').find('td:nth-child(4)').text(); // Assuming the email is in the 4th column of the table
-            var link = "http://localhost/garba.ca/add_event.php?requestId=" + btoa(requestId);
-
 
             Swal.fire({
-                title: 'User Email & Link',
-                html: `Email: ${userEmail}<br>Link: <input type='text' id='userLink' value='${link}' readonly>`,
-                confirmButtonText: 'Copy Link',
+                title: 'Is this for Event Registration?',
+                icon: 'question',
                 showDenyButton: true,
-                denyButtonText: 'Approve',
-                showCancelButton: true,
-                cancelButtonText: 'Cancel'
+                confirmButtonText: 'Yes',
+                denyButtonText: 'No',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var copyText = document.getElementById("userLink");
-                    copyText.select();
-                    document.execCommand("copy");
-                    Swal.fire('Link copied!', '', 'success').then(() => {
-                        approveRequest(button); // Reopen the initial Swal after copying the link
-                    });
-                } else if (result.isDenied) {
                     Swal.fire({
                         title: 'Have you sent the Email?',
                         icon: 'question',
-                        showCancelButton: true,
+                        showDenyButton: true,
                         confirmButtonText: 'Yes',
-                        cancelButtonText: 'No',
+                        denyButtonText: 'No',
                     }).then((result) => {
                         if (result.isConfirmed) {
                             updateRequestStatus(requestId, 1);
-                            Swal.fire('Approved!', '', 'success');
+                            Swal.fire('Approved!', '', 'success')
+                            location.reload();
+
+                        } else {
+                            Swal.fire('Please send the email first.', '', 'info')
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        title: 'Have you taken appropriate action?',
+                        icon: 'question',
+                        showDenyButton: true,
+                        confirmButtonText: 'Yes',
+                        denyButtonText: 'No',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            updateRequestStatus(requestId, 1);
+                            Swal.fire('Approved!', '', 'success')
                             location.reload();
                         } else {
-                            Swal.fire('Please send the email first.', '', 'info');
+                            Swal.fire('Please solve the request first.', '', 'info')
                         }
-                    });
+                    })
                 }
-            });
+            })
         }
-
-
 
         function updateRequestStatus(requestId, status) {
             $.ajax({
@@ -423,28 +476,6 @@ mysqli_close($conn);
                 }
             });
         }
-
-        function deniedRequest(button) {
-            var requestId = $(button).data('id');
-
-            Swal.fire({
-                title: 'Are you sure you want to deny this request?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Deny it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    updateRequestStatus(requestId, -1);
-                    Swal.fire('Denied!', 'The request has been denied.', 'success');
-                    location.reload();
-                } else {
-                    Swal.fire('Cancelled', 'The request remains pending.', 'info');
-                }
-            })
-        }
-
     </script>
 
 

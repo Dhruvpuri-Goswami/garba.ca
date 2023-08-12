@@ -13,15 +13,33 @@ $username = $_SESSION["username"];
 // Connect to the database and fetch request details
 require 'connection.php';
 
-$sql = "SELECT * FROM tbl_event WHERE status='1'";
+$sql = "SELECT * FROM tbl_event WHERE give_away='1' LIMIT 1";
 $result = mysqli_query($conn, $sql);
 
+$event = mysqli_fetch_assoc($result);
 
-$requests = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $requests[] = $row;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Using a prepared statement to avoid SQL injection
+    $stmt = $conn->prepare("SELECT * FROM tbl_giveaway ORDER BY RAND() LIMIT 5");
+    $stmt->execute();
+    $result_winners = $stmt->get_result();
+
+    $winners = [];
+    while ($row_winner = mysqli_fetch_assoc($result_winners)) {
+        $winners[] = $row_winner;
+        $winner_id = $row_winner['id'];
+
+        // Update is_winner for selected winners
+        $updateStmt = $conn->prepare("UPDATE tbl_giveaway SET is_winner = 1 WHERE id = ?");
+        $updateStmt->bind_param("i", $winner_id);
+        $updateStmt->execute();
+        $updateStmt->close();
+    }
+    $stmt->close();
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'winners' => $winners]);
+    exit();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,6 +53,8 @@ while ($row = mysqli_fetch_assoc($result)) {
     <meta name="author" content="">
 
     <title>Garba.ca</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -108,7 +128,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 
             <!-- Nav Item - Utilities Collapse Menu -->
-                        <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
@@ -127,19 +147,19 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <i class="fas fa-fw fa-folder"></i>
                     <span>FEATURE EVENTS</span>
                 </a>
-</li>
-<li class="nav-item">
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="give_away.php">
                     <i class="fas fa-fw fa-donate"></i>
                     <span>GIVE AWAY</span>
                 </a>
-</li>
-<li class="nav-item">
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="give_away_result.php">
                     <i class="fas fa-fw fa-donate"></i>
                     <span>GIVE AWAY RESULT</span>
                 </a>
-</li>
+            </li>
 
             <!-- Nav Item - Charts -->
 
@@ -218,7 +238,8 @@ while ($row = mysqli_fetch_assoc($result)) {
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../logout.php" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="../logout.php" data-toggle="modal"
+                                    data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -228,225 +249,142 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </ul>
 
                 </nav>
-                <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
+                <!-- ... [PHP code from above without changes] ... -->
+
+                <!-- ... [The rest of the HTML before the content area] ... -->
+
                 <div class="container-fluid">
+                    <h2 class="mb-4"><b>Giveaway Result</b></h2>
+                    <div class="row">
+                        <!-- Event Display -->
+                        <div class="col-md-4">
+                            <?php if ($event): ?>
+                            <div class="card shadow-lg mb-4">
+                                <img src="<?php echo $event['event_poster']; ?>" class="card-img-top" alt="Event Poster"
+                                    style="height: 400px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-primary"><?php echo $event['event_name']; ?></h5>
+                                    <p class="card-text"><i class="fas fa-map-marker-alt text-muted"></i> Venue:
+                                        <?php echo $event['event_venue']; ?></p>
+                                    <p class="card-text"><i class="fas fa-user text-muted"></i> Host:
+                                        <?php echo $event['event_host']; ?></p>
+                                </div>
+                                <div class="card-footer">
+                                    <button id="selectWinners" class="btn btn-primary btn-block">Select Winners</button>
+                                </div>
+                            </div>
+                            <?php else: ?>
+                            <div class="alert alert-warning" role="alert">
+                                There is no current giveaway.
+                            </div>
+                            <?php endif; ?>
 
-
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h1 class="h3 mb-0 text-gray-800"><b>Accepted Events</b></h1>
-
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-    <thead>
-        <tr>
-            <th>No.</th>
-            <th>Event Name</th>
-            <th>Location</th>
-            <th>Artist Name</th>
-            <th>Sponsors</th>
-            <th>Contact No.</th>
-            <th>Email ID</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Price</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php $count = 1;
-        foreach ($requests as $request): ?>
-            <tr>
-                <td><?php echo $count++; ?></td>
-                <td><?php echo $request['event_name']; ?></td>
-                <td><?php echo $request['event_venue']; ?></td>
-
-                <!-- Artist Name -->
-                <td>
-                    <?php 
-                        $eventid = $request['event_id'];
-                        $artist_sql = "SELECT artist_name FROM tbl_artist WHERE event_id=?";
-                        $stmt = $conn->prepare($artist_sql);
-                        $stmt->bind_param("i", $eventid);  // Assuming event_id is an integer
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        $artist_names = [];
-                        while ($row = $result->fetch_assoc()) {
-                            $artist_names[] = $row['artist_name'];
-                        }
-                        $stmt->close();
-                        
-                        // Convert the array of artist names into a comma-separated string
-                        $artist_string = implode(', ', $artist_names);
-                        
-                        echo $artist_string;
-                    ?>
-                </td>
-                <td><?php echo $request['event_sponsor']; ?></td>
-                <!-- Contact No. -->
-                <td>
-                    <?php 
-                        $eventid = $request['event_id'];
-                        $contact_sql = "SELECT contact_no FROM tbl_contact WHERE event_id=?";
-                        $stmt = $conn->prepare($contact_sql);
-                        $stmt->bind_param("i", $eventid);  // Assuming event_id is an integer
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        
-                        $contacts = [];
-                        while ($row = $result->fetch_assoc()) {
-                            $contacts[] = $row['contact_no'];
-                        }
-                        $stmt->close();
-                        
-                        // Convert the array of contacts into a comma-separated string
-                        $contact = implode(', ', $contacts);
-                        
-                        echo $contact;
-                    ?>
-                </td>
-                <td><?php echo $request['gmail']; ?></td>
-                <td><?php echo $request['event_start_date']. " To " .$request['event_end_date']; ?></td>
-                <td><?php echo $request['event_start_time']. " To " .$request['event_end_time']; ?></td>
-                <td><?php echo "$ " . $request['event_price']; ?></td>
-                <td><?php echo $request['event_desc']; ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-
+                            <div class="col-md-8">
+                                <div id="winnersContainer" class="mt-4"></div>
+                                <button id="endGiveaway" class="btn btn-danger mt-4">End Giveaway</button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- ... [The rest of the HTML and JS script from above without changes] ... -->
+
+
+
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
-            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-primary" href="../login.php">Logout</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- Bootstrap core JavaScript-->
+        <script src="../vendor/jquery/jquery.min.js"></script>
+        <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+        <!-- Core plugin JavaScript-->
+        <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="../js/sb-admin-2.min.js"></script>
+        <!-- Custom scripts for all pages-->
+        <script src="../js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="../vendor/chart.js/Chart.min.js"></script>
+        <!-- Page level plugins -->
+        <script src="../vendor/chart.js/Chart.min.js"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="../js/demo/chart-area-demo.js"></script>
-    <script src="../js/demo/chart-pie-demo.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        function approveRequest(button) {
-            var requestId = $(button).data('id');
-
+        <!-- Page level custom scripts -->
+        <script src="../js/demo/chart-area-demo.js"></script>
+        <script src="../js/demo/chart-pie-demo.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        $('#selectWinners').on('click', function() {
+            $.post('', {}, function(response) {
+                if (response.success) {
+                    // Display winners in a table
+                    let winnersTable = '<table class="table table-bordered">';
+                    winnersTable +=
+                        '<thead><tr><th>Name</th><th>Email</th><th>Contact No</th></tr></thead><tbody>';
+                    response.winners.forEach(winner => {
+                        winnersTable +=
+                            `<tr><td>${winner.name}</td><td>${winner.email}</td><td>${winner.contact_no}</td></tr>`;
+                    });
+                    winnersTable += '</tbody></table>';
+                    $('#winnersContainer').html(winnersTable);
+                } else {
+                    alert('Error selecting winners.');
+                }
+            }, 'json');
+        });
+        $('#endGiveaway').on('click', function() {
             Swal.fire({
-                title: 'Is this for Event Registration?',
-                icon: 'question',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                denyButtonText: 'No',
+                title: 'End Giveaway?',
+                text: "Have you noted down the winners? This action will remove the giveaway!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, end it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Have you sent the Email?',
-                        icon: 'question',
-                        showDenyButton: true,
-                        confirmButtonText: 'Yes',
-                        denyButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            updateRequestStatus(requestId, 1);
-                            Swal.fire('Approved!', '', 'success')
-                            location.reload();
-
+                    // Make an AJAX request to end the giveaway
+                    $.post('end_giveaway.php', {}, function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Ended!',
+                                'The giveaway has been ended.',
+                                'success'
+                            ).then(() => {
+                                location.reload(); // Reload the page
+                            });
                         } else {
-                            Swal.fire('Please send the email first.', '', 'info')
+                            alert('Error ending the giveaway.');
                         }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Have you taken appropriate action?',
-                        icon: 'question',
-                        showDenyButton: true,
-                        confirmButtonText: 'Yes',
-                        denyButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            updateRequestStatus(requestId, 1);
-                            Swal.fire('Approved!', '', 'success')
-                            location.reload();
-                        } else {
-                            Swal.fire('Please solve the request first.', '', 'info')
-                        }
-                    })
-                }
-            })
-        }
-
-        function updateRequestStatus(requestId, status) {
-            $.ajax({
-                url: 'request_status.php',
-                method: 'POST',
-                data: {
-                    id: requestId,
-                    status: status
-                },
-                success: function (response) {
-                    console.log("SUCCESS");
-                },
-                error: function (error) {
-                    console.log("ERROR");
-
+                    }, 'json');
                 }
             });
-        }
-    </script>
-
-
-
+        });
+        </script>
 </body>
 
 </html>

@@ -13,11 +13,7 @@ $username = $_SESSION["username"];
 // Connect to the database and fetch request details
 require 'connection.php';
 
-$sql = "SELECT r.*, CASE WHEN e.request_id IS NOT NULL THEN 1 ELSE 0 END AS is_registered 
-        FROM tbl_request r 
-        LEFT JOIN tbl_event e ON r.request_id = e.request_id";
-
-
+$sql = "SELECT * FROM tbl_event WHERE status='1'";
 $result = mysqli_query($conn, $sql);
 
 
@@ -26,7 +22,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $requests[] = $row;
 }
 
-mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,6 +35,8 @@ mysqli_close($conn);
     <meta name="author" content="">
 
     <title>Garba.ca</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+
 
     <!-- Custom fonts for this template-->
     <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -61,7 +58,7 @@ mysqli_close($conn);
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="admin_dashboard.php">
                 <div class="sidebar-brand-text mx-3">Garba</div>
             </a>
 
@@ -70,7 +67,7 @@ mysqli_close($conn);
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../admin_dashboard.php">
+                <a class="nav-link" href="./admin_dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -83,7 +80,7 @@ mysqli_close($conn);
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Requests
+                Events
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
@@ -91,15 +88,13 @@ mysqli_close($conn);
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>APPROVE REQUESTS</span>
+                    <span>APPROVE EVENTS</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">APROVE REQUESTS</h6>
-                        <a class="collapse-item" href="./approve_requests.php">APPROVE REQUESTS</a>
-                        <a class="collapse-item" href="./accepted_requests.php">ACCEPTED REQUESTS</a>
-
-                        <a class="collapse-item" href="./deleted_requests.php">DELETED REQUESTS</a>
+                        <h6 class="collapse-header">APROVE EVENTS</h6>
+                        <a class="collapse-item" href="./approve_requests.php">APPROVE EVENT</a>
+                        <a class="collapse-item" href="./accepted_requests.php">ACCEPTED EVENTS</a>
                     </div>
                 </div>
             </li>
@@ -107,32 +102,6 @@ mysqli_close($conn);
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Requests
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages2"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>REQUESTS</span>
-                </a>
-                <div id="collapsePages2" class="collapse" aria-labelledby="headingPages"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">REQUESTS HISTORY</h6>
-                        <a class="collapse-item" href="./all_requests.php">REQUESTS HISTORY</a>
-                    </div>
-                </div>
-            </li>
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -141,21 +110,38 @@ mysqli_close($conn);
 
 
             <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
+                        <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
-                    <span>CHECK STATUS</span>
+                    <span>CHECK HISTORY</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">CHECK STATUS</h6>
-                        <a class="collapse-item" href="./event_status.php">EVENT STATUS</a>
-                        <a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
+                        <h6 class="collapse-header">CHECK HISTORY</h6>
+                        <a class="collapse-item" href="./all_requests.php">EVENT HISTORY</a>
                     </div>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="featured_events.php">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>FEATURE EVENTS</span>
+                </a>
+</li>
+<li class="nav-item">
+                <a class="nav-link" href="give_away.php">
+                    <i class="fas fa-fw fa-donate"></i>
+                    <span>GIVE AWAY</span>
+                </a>
+</li>
+<li class="nav-item">
+                <a class="nav-link" href="give_away_result.php">
+                    <i class="fas fa-fw fa-donate"></i>
+                    <span>GIVE AWAY RESULT</span>
+                </a>
+</li>
 
             <!-- Nav Item - Charts -->
 
@@ -234,7 +220,8 @@ mysqli_close($conn);
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="../logout.php" data-toggle="modal"
+                                    data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -244,89 +231,57 @@ mysqli_close($conn);
                     </ul>
 
                 </nav>
-                <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
+
                 <div class="container-fluid">
-
-
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h1 class="h3 mb-0 text-gray-800"><b>Event Status</b></h1>
-
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Description</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $count = 1; ?>
-                                        <?php foreach ($requests as $request): ?>
-                                            <tr>
-                                                <td>
-                                                    <?php echo $count++; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['first_name']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['last_name']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['email_id']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['phone_no']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['description']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    if ($request['is_registered'] == 1) {
-                                                        echo '<button type="button" class="btn btn-success btn-sm btn-nocursor">Registered</button>';
-                                                    } else {
-                                                        echo '<button type="button" style="color: black;" class="btn btn-warning btn-sm btn-nocursor">Pending</button>';
-                                                    }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-
-                                </table>
+                    <div class="row">
+                        <?php foreach ($requests as $request): ?>
+                            <div class="col-lg-2 col-md-2 col-sm-6 mb-2">
+                                <div class="card h-100 event-card" data-event-id="<?php echo $request['event_id']; ?>"
+                                    style="cursor: pointer; max-width: 200px; margin: auto;">
+                                    <img src="<?php echo $request['event_poster']; ?>" class="card-img-top"
+                                        alt="Event Poster" style="height: 100px; object-fit: cover;">
+                                    <span class="badge badge-success position-absolute"
+                                        style="bottom: 5px; right: 5px; display: none;">Selected</span>
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title mb-1 text-primary text-center">
+                                            <b>
+                                                <?php echo $request['event_name']; ?>
+                                            </b>
+                                        </h6>
+                                        <p class="card-text mb-1">
+                                            <small><i class="fas fa-map-marker-alt text-muted"></i>
+                                                <?php echo $request['event_venue']; ?>
+                                            </small>
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <small><i class="fas fa-user text-muted"></i>
+                                                <?php echo $request['event_host']; ?>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
-
+                    <div class="mt-4 text-center">
+                        <button id="submitEvents" class="btn btn-primary">GIVEAWAY</button>
+                    </div>
                 </div>
-                <!-- /.container-fluid -->
+
+
+
 
             </div>
-            <!-- End of Main Content -->
 
         </div>
-        <!-- End of Content Wrapper -->
 
     </div>
-    <!-- End of Page Wrapper -->
 
-    <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -340,7 +295,7 @@ mysqli_close($conn);
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -364,74 +319,42 @@ mysqli_close($conn);
     <script src="../js/demo/chart-pie-demo.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function approveRequest(button) {
-            var requestId = $(button).data('id');
+       let selectedEvent;
 
-            Swal.fire({
-                title: 'Is this for Event Registration?',
-                icon: 'question',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                denyButtonText: 'No',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Have you sent the Email?',
-                        icon: 'question',
-                        showDenyButton: true,
-                        confirmButtonText: 'Yes',
-                        denyButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            updateRequestStatus(requestId, 1);
-                            Swal.fire('Approved!', '', 'success')
-                            location.reload();
-
-                        } else {
-                            Swal.fire('Please send the email first.', '', 'info')
-                        }
-                    })
-                } else {
-                    Swal.fire({
-                        title: 'Have you taken appropriate action?',
-                        icon: 'question',
-                        showDenyButton: true,
-                        confirmButtonText: 'Yes',
-                        denyButtonText: 'No',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            updateRequestStatus(requestId, 1);
-                            Swal.fire('Approved!', '', 'success')
-                            location.reload();
-                        } else {
-                            Swal.fire('Please solve the request first.', '', 'info')
-                        }
-                    })
-                }
-            })
+$('.event-card').on('click', function () {
+    // If this card is already selected, deselect it
+    if ($(this).hasClass('border-success')) {
+        $(this).removeClass('border-success');
+        $(this).find('.badge').hide();
+        selectedEvent = null;
+    } else {
+        // If another card is already selected, deselect it first
+        if (selectedEvent !== null) {
+            $('.event-card.border-success').removeClass('border-success').find('.badge').hide();
         }
+        // Now, select this card
+        $(this).addClass('border-success');
+        $(this).find('.badge').show();
+        selectedEvent = $(this).data('event-id');
+    }
+});
 
-        function updateRequestStatus(requestId, status) {
-            $.ajax({
-                url: 'request_status.php',
-                method: 'POST',
-                data: {
-                    id: requestId,
-                    status: status
-                },
-                success: function (response) {
-                    console.log("SUCCESS");
-                },
-                error: function (error) {
-                    console.log("ERROR");
+$('#submitEvents').on('click', function () {
+    if (selectedEvent) {
+        $.post('give_away_id.php', { eventId: selectedEvent }, function (response) {
+            if (response.success) {
+                alert("Event added to giveaway successfully!");
+            } else {
+                var errorMessage = response.error ? response.error : "Unknown error.";
+                alert("There was an error updating the event. Error: " + errorMessage);
+            }
+        }, "json");
+    } else {
+        alert("Please select an event.");
+    }
+});
 
-                }
-            });
-        }
     </script>
-
-
-
 </body>
 
 </html>

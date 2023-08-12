@@ -58,7 +58,10 @@
                   <div class="flex justify-center relative rounded-lg overflow-hidden h-72">
                     <div class="transition-transform duration-500 transform ease-in-out hover:scale-110 w-full">
                       <div class="absolute inset-0 bg-black">
-                        <img class="object-cover w-full h-full" src="<?php echo $row['event_poster']; ?>" alt="">
+                      <?php
+                          $imageLink = str_replace("../", "./", $row['event_poster']);
+                          ?>
+                          <img class="object-cover w-full h-full" src="<?php echo $imageLink; ?>" alt="Event Poster">
                       </div>
                     </div>
 
@@ -81,7 +84,7 @@
                   </div>
 
                   <a href="mainCard.php?event_id=<?php echo $row['event_id']; ?>"
-                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg transition-colors duration-300">Book
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg transition-colors duration-300">Book
                     Now</a>
                 </div>
               </a>

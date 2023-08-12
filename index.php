@@ -1,3 +1,10 @@
+<?php
+// Include your database connection file here
+include './php/connection.php';
+$sql = "UPDATE tbl_event SET is_complete = '1' WHERE event_end_date < CURDATE()";
+$result = mysqli_query($conn, $sql);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,6 +16,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Pacifico&family=Quicksand&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
@@ -18,21 +28,28 @@
   <title>Garba.ca</title>
 </head>
 
-<body>
+<body class="box-border">
   <header class="relative">
     <!-- Background Video -->
-    <video class="video absolute top-0 left-0 w-full h-[85vh] object-cover" autoplay muted loop playsinline>
+    <video class="  video absolute top-0 left-0 w-full h-[85vh] object-cover" autoplay muted loop playsinline>
       <source src="./content/vi edi.mp4" type="video/mp4">
       <!-- Add alternative video sources here (e.g., WebM, Ogg) -->
     </video>
 
     <!-- Internal Search and Other Section! -->
-    <div class="absolute w-full h-[85vh] bg-black bg-opacity-80 text-white">
-      <nav class="flex justify-between mx-8 py-5">
+    <div class="absolute w-full h-[85vh] bg-opacity-80 bg-black  text-white">
+      <nav class="flex justify-between mx-8 py-5 items-center">
         <div>
           <h2 class="text-3xl font-[Quicksand] font-bold">Garba</h2>
         </div>
-        <a href="./admin_login.php">admin</a>
+        <div class="flex gap-4">
+          <a href="login.php"
+            class="transition-all duration-100 py-1 px-5 border border-gray-400 cursor-pointer hover:border-white box-border">Login</a>
+          <a href="signup.php"
+            class="transition-all duration-100 py-1 px-5 border border-gray-400 cursor-pointer hover:border-white box-border">Sign
+            up</a>
+        </div>
+
       </nav>
 
       <div class="h-[50vh] flex flex-col justify-center items-center">
@@ -68,14 +85,18 @@
           Featured Events
         </h3>
       </div>
+
+
+
       <div class="w-full h-full my-2">
+
+        <!-- event -->
+
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
           <?php
-          // Include your database connection file here
-          include './php/connection.php';
 
           // Fetching all event details from the database
-          $sql = "SELECT * FROM tbl_event LIMIT 4";
+          $sql = "SELECT * FROM tbl_event WHERE is_featured='1' LIMIT 4";
           $result = $conn->query($sql);
 
           if ($result->num_rows > 0) {
@@ -90,8 +111,10 @@
                       <div class="transition-transform duration-500 transform ease-in-out hover:scale-110 w-full">
                         <div class="absolute inset-0 bg-black">
                           <!-- Display the event poster image from database -->
-                          <img class="object-cover w-full h-full" src="<?php echo $row['event_poster']; ?>"
-                            alt="Event Poster">
+                          <?php
+                          $imageLink = str_replace("../", "./", $row['event_poster']);
+                          ?>
+                          <img class="object-cover w-full h-full" src="<?php echo $imageLink; ?>" alt="Event Poster">
                         </div>
                       </div>
 
@@ -112,11 +135,11 @@
 
                     <div class="mt-4">
                       <!-- Display the event name from database -->
-                      <h2 class="font-medium text-base md:text-[18px] text-gray-800 line-clamp-1">
+                      <h2 class="title font-medium text-base md:text-[20px] text-gray-800 line-clamp-1">
                         <?php echo $row['event_name']; ?>
                       </h2>
                       <!-- Display the event venue from database -->
-                      <p class="mt-1 text-[12px] text-gray-800 line-clamp-1">
+                      <p class="loc mt-1 text-[12px] text-gray-800 line-clamp-1">
                         <?php echo $row['event_venue']; ?>
                       </p>
                     </div>
@@ -149,23 +172,25 @@
           }
           $conn->close();
           ?>
+
+
+
         </div>
+
+        <!-- event -->
         <div class="text-center my-12">
           <a href="events.php"
-            class="text-2xl font-[Quicksand] pb-2 mt-4 hover:border-b-4 hover:border-yellow-500 transition-all duration-100 hover:text-yellow-500">
+            class="text-2xl px-6 py-2 rounded-lg hover:border-4 my-24 transition-all duration-100 bg-yellow-500 hover:text-white">
             more events
           </a>
         </div>
         <div class="bg-black h-fit flex flex-col md:flex-row mb-24">
           <div class="h-[50%]  text-white m-8 md:mt-16 md:w-[50%] md:h-full">
             <h3 class="text-yellow-500 font-[Quicksand] text-3xl font-extrabold md:text-[80px] ">COMMUNITY</h3>
-            <p class="font-sans pl-1 mt-2 tracking-tighter md:mt-10 md:text-2xl">Lorem ipsum dolor, sit amet consectetur
-              adipisicing elit. Laborum at doloremque error aut, consectetur Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Exercitationem, similique reprehenderit. Corporis explicabo architecto eius quas dolores
-              porro quasi, sint alias ducimus, voluptates tempore iusto neque eum reiciendis accusantium pariatur
-              suscipit
-              earum cum adipisci? voluptatibus distinctio ea maiores? Commodi eaque quas amet iusto aperiam ipsa autem,
-              dolore fuga, cupiditate nostrum vel voluptates! Architecto, nostrum.</p>
+            <p class="font-sans pl-1 mt-2 tracking-tighter md:mt-10 md:text-2xl">Amidst Canada's diverse tapestry, the
+              Garba community weaves its vibrant threads, dancing to the rhythm of unity. In every swirling step, we
+              celebrate our heritage, bridging cultures, and fostering joy. Together, we kindle the flame of tradition,
+              illuminating the maple nation with the warmth of our shared celebrations, keeping our roots alive..</p>
           </div>
           <div class="h-[50%] md:w-[50%] md:h-full">
             <img class="h-full w-full object-cover" src="./content/Images/garba1.webp" alt="">
@@ -178,97 +203,13 @@
 
 
 
-        <div class="pt-48 md:pt-8 md:mt-12">
 
-          <!-- component -->
-          <div class="flex justify-center items-center w-screen h-screen bg-white">
-            <!-- COMPONENT CODE -->
-            <div class="container mx-auto my-4 px-4 lg:px-20">
-
-              <div class="w-full p-8 my-4 md:px-12 lg:w-9/12 lg:pl-20 lg:pr-40 mr-auto rounded-2xl shadow-2xl">
-                <div class="flex">
-                  <h1 class="font-bold uppercase text-5xl">Send us a <br /> Request</h1>
-                </div>
-                <div class="grid grid-cols-1 gap-5 md:grid-cols-2 mt-5">
-                  <input
-                    class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline fname"
-                    type="text" placeholder="First Name*" />
-                  <input
-                    class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline lname"
-                    type="text" placeholder="Last Name*" />
-                  <input
-                    class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline email"
-                    type="email" placeholder="Email*" />
-                  <input
-                    class="w-full bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline phone"
-                    type="number" placeholder="Phone*" />
-                </div>
-                <div class="my-4">
-                  <textarea placeholder="Location | Event Details"
-                    class="w-full h-32 bg-gray-100 text-gray-900 mt-2 p-3 rounded-lg focus:outline-none focus:shadow-outline detail"></textarea>
-                </div>
-                <div class="my-2 w-1/2 lg:w-1/4">
-                  <button class="send_request uppercase text-sm font-bold tracking-wide bg-blue-900 hover:bg-blue-950 transition-all duration-100 text-gray-100 p-3 rounded-lg w-full 
-                      focus:outline-none focus:shadow-outline" type="button">
-                    Request
-                  </button>
-                </div>
-              </div>
-
-              <div
-                class="w-full lg:-mt-96 lg:w-2/6 px-8 py-12 ml-auto bg-blue-900 hover:bg-blue-950 transition-all duration-100 rounded-2xl">
-                <div class="flex flex-col text-white">
-                  <h1 class="font-bold uppercase text-4xl my-4">Requests</h1>
-                  <p class="text-gray-400">We accepts your requests, we welcome you to list your event on our site and
-                    it
-                    would be most awasome moment for us to collaborate with you!
-                  </p>
-
-                  <div class="flex my-4 w-2/3 lg:w-1/2">
-                    <div class="flex flex-col">
-                      <i class="fas fa-map-marker-alt pt-2 pr-2" />
-                    </div>
-                    <div class="flex flex-col">
-                      <h2 class="text-2xl">Main Office</h2>
-                      <p class="text-gray-400">5555 Tailwind RD, Pleasant Grove, UT 73533</p>
-                    </div>
-                  </div>
-
-                  <div class="flex my-4 w-2/3 lg:w-1/2">
-                    <div class="flex flex-col">
-                      <i class="fas fa-phone-alt pt-2 pr-2" />
-                    </div>
-                    <div class="flex flex-col">
-                      <h2 class="text-2xl">Call Us</h2>
-                      <p class="text-gray-400">Tel: xxx-xxx-xxx</p>
-                      <p class="text-gray-400">Fax: xxx-xxx-xxx</p>
-                    </div>
-                  </div>
-
-                  <div class="flex my-4 w-2/3 lg:w-1/2">
-                    <a href="https://www.facebook.com/ENLIGHTENEERING/" target="_blank" rel="noreferrer"
-                      class="rounded-full bg-white h-8 w-8 inline-block mx-1 text-center pt-1">
-                      <i class="fa fa-facebook text-blue-900" />
-                    </a>
-                    <a href="https://www.linkedin.com/company/enlighteneering-inc-" target="_blank" rel="noreferrer"
-                      class="rounded-full bg-white h-8 w-8 inline-block mx-1 text-center pt-1">
-                      <i class="fa fa-linkedin text-blue-900" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- COMPONENT CODE -->
-          </div>
-
-
-        </div>
 
 
         <!-- footer section -->
 
-        <div class="pt-56 md:pt-8 md:mt-12">
-          <footer class="relative bg-blueGray-200 pt-8 pb-6 ">
+        <div class="pt-56 md:pt-8 md:mt-12 bg-gray-300">
+          <footer class="relative bg-blueGray-200 pt-8 pb-6">
             <div class="container mx-auto px-4">
               <div class="flex flex-wrap text-left lg:text-left">
                 <div class="w-full lg:w-6/12 px-4">
@@ -280,10 +221,10 @@
                     <button
                       class="bg-white text-lightBlue-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
                       type="button">
-                      <i class="fa fa-twitter"></i></button><button
+                      <i class="fas fa-twitter"></i></button><button
                       class="bg-white text-lightBlue-600 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
                       type="button">
-                      <i class="fa fa-facebook"></i></button><button
+                      <i class="fas fa-facebook"></i></button><button
                       class="bg-white text-pink-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2"
                       type="button">
                       <i class="fa fa-instagram"></i></button>
@@ -388,6 +329,8 @@
     });
   });
 </script>
+
+<script src="./js/searchScript.js"></script>
 
 
 </html>

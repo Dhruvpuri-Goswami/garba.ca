@@ -3,7 +3,8 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION["username"])) {
-    header("Location: ../vender/admin_login.php");
+    header("Location: ../login.php");
+
     exit();
 }
 
@@ -11,13 +12,27 @@ if (!isset($_SESSION["username"])) {
 $username = $_SESSION["username"];
 
 // Connect to the database and fetch request details
-require 'connection.php';
+require './connection.php';
 
-$sql = "SELECT * FROM tbl_event";
 
+$sql_approved = "SELECT * FROM tbl_event WHERE status='1'";
+$result_approved = mysqli_query($conn, $sql_approved);
+$approved = mysqli_num_rows($result_approved);
+
+$sql_pending = "SELECT * FROM tbl_event WHERE status='0'";
+$result_pending = mysqli_query($conn, $sql_pending);
+$pending = mysqli_num_rows($result_pending);
+
+$sql_total = "SELECT * FROM tbl_event";
+$result_total = mysqli_query($conn, $sql_total);
+$total = mysqli_num_rows($result_total);
+
+$sql_completed = "SELECT * FROM tbl_event WHERE is_complete='1'";
+$result_completed = mysqli_query($conn, $sql_completed);
+$completed = mysqli_num_rows($result_completed);
+
+$sql = "SELECT * FROM tbl_event LIMIT 3";
 $result = mysqli_query($conn, $sql);
-
-
 $requests = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $requests[] = $row;
@@ -58,7 +73,7 @@ mysqli_close($conn);
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="admin_dashboard.php">
                 <div class="sidebar-brand-text mx-3">Garba</div>
             </a>
 
@@ -67,7 +82,7 @@ mysqli_close($conn);
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../admin_dashboard.php">
+                <a class="nav-link" href="./admin_dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -80,7 +95,7 @@ mysqli_close($conn);
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Requests
+                Events
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
@@ -88,15 +103,13 @@ mysqli_close($conn);
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
-                    <span>APPROVE REQUESTS</span>
+                    <span>APPROVE EVENTS</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">APROVE REQUESTS</h6>
-                        <a class="collapse-item" href="./approve_requests.php">APPROVE REQUESTS</a>
-                        <a class="collapse-item" href="./accepted_requests.php">ACCEPTED REQUESTS</a>
-
-                        <a class="collapse-item" href="./deleted_requests.php">DELETED REQUESTS</a>
+                        <h6 class="collapse-header">APROVE EVENTS</h6>
+                        <a class="collapse-item" href="./approve_requests.php">APPROVE EVENT</a>
+                        <a class="collapse-item" href="./accepted_requests.php">ACCEPTED EVENTS</a>
                     </div>
                 </div>
             </li>
@@ -104,32 +117,6 @@ mysqli_close($conn);
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Requests
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages2"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>REQUESTS</span>
-                </a>
-                <div id="collapsePages2" class="collapse" aria-labelledby="headingPages"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">REQUESTS HISTORY</h6>
-                        <a class="collapse-item" href="./all_requests.php">REQUESTS HISTORY</a>
-                    </div>
-                </div>
-            </li>
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -138,22 +125,38 @@ mysqli_close($conn);
 
 
             <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
+                        <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
-                    <span>CHECK STATUS</span>
+                    <span>CHECK HISTORY</span>
                 </a>
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">CHECK STATUS</h6>
-                        <a class="collapse-item" href="./event_status.php">EVENT STATUS</a>
-                        <a class="collapse-item" href="./delete_event.php">EVENT DELETE</a>
+                        <h6 class="collapse-header">CHECK HISTORY</h6>
+                        <a class="collapse-item" href="./all_requests.php">EVENT HISTORY</a>
                     </div>
                 </div>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link" href="featured_events.php">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>FEATURE EVENTS</span>
+                </a>
+</li>
+<li class="nav-item">
+                <a class="nav-link" href="give_away.php">
+                    <i class="fas fa-fw fa-donate"></i>
+                    <span>GIVE AWAY</span>
+                </a>
+</li>
+<li class="nav-item">
+                <a class="nav-link" href="give_away_result.php">
+                    <i class="fas fa-fw fa-donate"></i>
+                    <span>GIVE AWAY RESULT</span>
+                </a>
+</li>
             <!-- Nav Item - Charts -->
 
             <div class="text-center d-none d-md-inline">
@@ -231,7 +234,7 @@ mysqli_close($conn);
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="../logout.php" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -246,59 +249,121 @@ mysqli_close($conn);
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800"><b>Dashboard</b></h1>
+                    </div>
 
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card text-white bg-gradient-danger mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Events</h5>
+                                    <p class="card-text display-4">
+                                        <?php echo $total; ?>
+                                    </p>
+                                    <a href="./all_requests.php" class="btn btn-light">View All</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card text-white bg-gradient-success mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Approved Events</h5>
+                                    <p class="card-text display-4">
+                                        <?php echo $approved; ?>
+                                    </p>
+                                    <a href="./accepted_requests.php" class="btn btn-light">View All</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card text-white bg-gradient-info mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Pending Events</h5>
+                                    <p class="card-text display-4">
+                                        <?php echo $pending; ?>
+                                    </p>
+                                    <a href="./approve_requests.php" class="btn btn-light">View All</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="card text-white bg-gradient-dark mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Completed Events</h5>
+                                    <p class="card-text display-4">
+                                        <?php echo $completed; ?>
+                                    </p>
+                                    <a href="./completed_events.php" class="btn btn-light">View All</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><br>
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h1 class="h3 mb-0 text-gray-800"><b>Approve Requests</b></h1>
-
+                            <h6 class="m-0 font-weight-bold text-primary">Latest Activity</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Event ID</th>
+                                            <th>ID</th>
                                             <th>Event Name</th>
-                                            <th>Host Name</th>
-                                            <th>Date</th>
                                             <th>Venue</th>
-                                            <th>Description</th>
-                                            <th>Action</th>
+                                            <th>Host</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
-
-
                                     <tbody>
-                                        <?php $count = 1; ?>
-                                        <?php foreach ($requests as $event): ?>
+                                        <?php $count = 1;
+                                        foreach ($requests as $request): ?>
                                             <tr>
                                                 <td>
-                                                    <?php echo $event['event_id']; ?>
+                                                    <?php echo $count++; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $event['event_name']; ?>
+                                                    <?php echo $request['event_name']; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $event['event_host']; ?>
+                                                    <?php echo $request['event_venue']; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $event['event_start_date']; ?>
+                                                    <?php echo $request['event_host']; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $event['event_venue']; ?>
+                                                    <?php echo $request['gmail']; ?>
                                                 </td>
+                                                <?php
+                                                $data = $request['status'];
+                                                $case;
+
+                                                switch ($data) {
+                                                    case 1:
+                                                        $case = '<button type="button" class="btn btn-success btn-sm btn-nocursor">Approved</button>';
+                                                        break;
+                                                    case -1:
+                                                        $case = '<button type="button" class="btn btn-danger btn-sm btn-nocursor">Denied</button>';
+                                                        break;
+                                                    case 0:
+                                                        $case = '<button type="button" style="color: black;" class="btn btn-warning btn-sm btn-nocursor">Pending</button>';
+                                                        break;
+                                                }
+                                                ?>
                                                 <td>
-                                                    <?php echo $event['event_desc']; ?>
-                                                </td>
-                                                <td>
-                                                    <button onclick="deleteEvent(<?php echo $event['event_id']; ?>)"
-                                                        class="btn btn-danger btn-sm">Delete</button>
+                                                    <?php echo $case; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
-
                                 </table>
+                                <div class="d-flex justify-content-end">
+                                    <a href="./all_requests.php" class="btn bg-gradient-primary text-white">Show
+                                        All</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -334,7 +399,7 @@ mysqli_close($conn);
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
                 </div>
             </div>
         </div>
@@ -356,38 +421,6 @@ mysqli_close($conn);
     <!-- Page level custom scripts -->
     <script src="../js/demo/chart-area-demo.js"></script>
     <script src="../js/demo/chart-pie-demo.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-
-        function deleteEvent(eventId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: 'delete_events.php',
-                        method: 'POST',
-                        data: { id: eventId },
-                        success: function (response) {
-                            Swal.fire('Deleted!', 'The event has been deleted.', 'success').then(() => {
-                                location.reload();
-                            });
-                        },
-                        error: function (error) {
-                            Swal.fire('Error!', 'Something went wrong.', 'error');
-                        }
-                    });
-                }
-            })
-        }
-
-    </script>
-
 
 
 </body>

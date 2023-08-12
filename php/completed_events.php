@@ -13,7 +13,7 @@ $username = $_SESSION["username"];
 // Connect to the database and fetch request details
 require 'connection.php';
 
-$sql = "SELECT * FROM tbl_event";
+$sql = "SELECT * FROM tbl_event WHERE is_complete='1'";
 $result = mysqli_query($conn, $sql);
 
 
@@ -56,7 +56,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="admin_dashboard.php">
                 <div class="sidebar-brand-text mx-3">Garba</div>
             </a>
 
@@ -218,8 +218,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../logout.php" data-toggle="modal"
-                                    data-target="#logoutModal">
+                                <a class="dropdown-item" href="../logout.php" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -242,120 +241,83 @@ while ($row = mysqli_fetch_assoc($result)) {
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Event Name</th>
-                                            <th>Location</th>
-                                            <th>Status</th>
-                                            <th>Artist Name</th>
-                                            <th>Sponsors</th>
-                                            <th>Contact No.</th>
-                                            <th>Email ID</th>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Price</th>
-                                            <th>Description</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $count = 1;
-                                        foreach ($requests as $request): ?>
-                                            <tr>
-                                                <td>
-                                                    <?php echo $count++; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['event_name']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['event_venue']; ?>
-                                                </td>
-                                                <!-- Status Field -->
-                                                <?php
-                                                $status = $request['status'];
-                                                switch ($status) {
-                                                    case '1':
-                                                        $status_display = '<button type="button" class="btn btn-success btn-sm btn-nocursor">Active</button>';
-                                                        break;
-                                                    case '0':
-                                                        $status_display = '<button type="button" style="color: black;" class="btn btn-warning btn-sm btn-nocursor">Pending</button>';
-                                                        break;
-                                                    case '-1':
-                                                        $status_display = '<button type="button" class="btn btn-danger btn-sm btn-nocursor">Rejected</button>';
-                                                        break;
-                                                }
-                                                ?>
-                                                <td>
-                                                    <?php echo $status_display; ?>
-                                                </td>
-                                                <!-- Artist Name -->
-                                                <td>
-                                                    <?php
-                                                    $eventid = $request['event_id'];
-                                                    $artist_sql = "SELECT artist_name FROM tbl_artist WHERE event_id=?";
-                                                    $stmt = $conn->prepare($artist_sql);
-                                                    $stmt->bind_param("i", $eventid); // Assuming event_id is an integer
-                                                    $stmt->execute();
-                                                    $result = $stmt->get_result();
-
-                                                    $artist_names = [];
-                                                    while ($row = $result->fetch_assoc()) {
-                                                        $artist_names[] = $row['artist_name'];
-                                                    }
-                                                    $stmt->close();
-
-                                                    // Convert the array of artist names into a comma-separated string
-                                                    $artist_string = implode(', ', $artist_names);
-
-                                                    echo $artist_string;
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['event_sponsor']; ?>
-                                                </td>
-                                                <!-- Contact No. -->
-                                                <td>
-                                                    <?php
-                                                    $eventid = $request['event_id'];
-                                                    $contact_sql = "SELECT contact_no FROM tbl_contact WHERE event_id=?";
-                                                    $stmt = $conn->prepare($contact_sql);
-                                                    $stmt->bind_param("i", $eventid); // Assuming event_id is an integer
-                                                    $stmt->execute();
-                                                    $result = $stmt->get_result();
-
-                                                    $contacts = [];
-                                                    while ($row = $result->fetch_assoc()) {
-                                                        $contacts[] = $row['contact_no'];
-                                                    }
-                                                    $stmt->close();
-
-                                                    // Convert the array of contacts into a comma-separated string
-                                                    $contact = implode(', ', $contacts);
-
-                                                    echo $contact;
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['gmail']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['event_start_date'] . " To " . $request['event_end_date']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['event_start_time'] . " To " . $request['event_end_time']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo "$ " . $request['event_price']; ?>
-                                                </td>
-                                                <td>
-                                                    <?php echo $request['event_desc']; ?>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Event Name</th>
+            <th>Location</th>
+            <th>Artist Name</th>
+            <th>Sponsors</th>
+            <th>Contact No.</th>
+            <th>Email ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Price</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php $count = 1;
+        foreach ($requests as $request): ?>
+            <tr>
+                <td><?php echo $count++; ?></td>
+                <td><?php echo $request['event_name']; ?></td>
+                <td><?php echo $request['event_venue']; ?></td>
+                
+                <td>
+                    <?php 
+                        $eventid = $request['event_id'];
+                        $artist_sql = "SELECT artist_name FROM tbl_artist WHERE event_id=?";
+                        $stmt = $conn->prepare($artist_sql);
+                        $stmt->bind_param("i", $eventid);  // Assuming event_id is an integer
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        
+                        $artist_names = [];
+                        while ($row = $result->fetch_assoc()) {
+                            $artist_names[] = $row['artist_name'];
+                        }
+                        $stmt->close();
+                        
+                        // Convert the array of artist names into a comma-separated string
+                        $artist_string = implode(', ', $artist_names);
+                        
+                        echo $artist_string;
+                    ?>
+                </td>
+                <td><?php echo $request['event_sponsor']; ?></td>
+                <!-- Contact No. -->
+                <td>
+                    <?php 
+                        $eventid = $request['event_id'];
+                        $contact_sql = "SELECT contact_no FROM tbl_contact WHERE event_id=?";
+                        $stmt = $conn->prepare($contact_sql);
+                        $stmt->bind_param("i", $eventid);  // Assuming event_id is an integer
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        
+                        $contacts = [];
+                        while ($row = $result->fetch_assoc()) {
+                            $contacts[] = $row['contact_no'];
+                        }
+                        $stmt->close();
+                        
+                        // Convert the array of contacts into a comma-separated string
+                        $contact = implode(', ', $contacts);
+                        
+                        echo $contact;
+                    ?>
+                </td>
+                <td><?php echo $request['gmail']; ?></td>
+                <td><?php echo $request['event_start_date']. " To " .$request['event_end_date']; ?></td>
+                <td><?php echo $request['event_start_time']. " To " .$request['event_end_time']; ?></td>
+                <td><?php echo "$ " . $request['event_price']; ?></td>
+                <td><?php echo $request['event_desc']; ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 
                             </div>
                         </div>
@@ -392,7 +354,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="../login.php">Logout</a>
                 </div>
             </div>
         </div>
