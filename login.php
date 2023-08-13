@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="flex mt-6 justify-center text-xs">
               <a class="text-yellow-400 hover:text-yellow-500" href="#">Forgot Password</a>
               <span class="mx-2 text-gray-300">/</span>
-              <a class="text-yellow-400 hover:text-yellow-500" href="#">Sign Up</a>
+              <a class="text-yellow-400 hover:text-yellow-500" href="signup.php">Sign Up</a>
             </div>
           </form>
 

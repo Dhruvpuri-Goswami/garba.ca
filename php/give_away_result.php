@@ -250,47 +250,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 </nav>
 
-                <!-- ... [PHP code from above without changes] ... -->
-
-                <!-- ... [The rest of the HTML before the content area] ... -->
-
                 <div class="container-fluid">
-                    <h2 class="mb-4"><b>Giveaway Result</b></h2>
+                    <h2 class="mb-4 text-primary"><b>Giveaway Result</b></h2>
+                    <hr>
                     <div class="row">
                         <!-- Event Display -->
                         <div class="col-md-4">
                             <?php if ($event): ?>
-                            <div class="card shadow-lg mb-4">
-                                <img src="<?php echo $event['event_poster']; ?>" class="card-img-top" alt="Event Poster"
-                                    style="height: 400px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title text-primary"><?php echo $event['event_name']; ?></h5>
-                                    <p class="card-text"><i class="fas fa-map-marker-alt text-muted"></i> Venue:
-                                        <?php echo $event['event_venue']; ?></p>
-                                    <p class="card-text"><i class="fas fa-user text-muted"></i> Host:
-                                        <?php echo $event['event_host']; ?></p>
+                                <div class="card shadow-lg mb-4">
+                                    <img src="<?php echo $event['event_poster']; ?>" class="card-img-top" alt="Event Poster"
+                                        style="height: 400px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary">
+                                            <?php echo $event['event_name']; ?>
+                                        </h5>
+                                        <p class="card-text"><i class="fas fa-map-marker-alt text-muted"></i> Venue:
+                                            <?php echo $event['event_venue']; ?>
+                                        </p>
+                                        <p class="card-text"><i class="fas fa-user text-muted"></i> Host:
+                                            <?php echo $event['event_host']; ?>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button id="selectWinners" class="btn btn-primary btn-block">Select Winners</button>
+                                    </div>
                                 </div>
-                                <div class="card-footer">
-                                    <button id="selectWinners" class="btn btn-primary btn-block">Select Winners</button>
-                                </div>
-                            </div>
                             <?php else: ?>
-                            <div class="alert alert-warning" role="alert">
-                                There is no current giveaway.
-                            </div>
+                                <div class="alert alert-warning" role="alert">
+                                    There is no current giveaway.
+                                </div>
                             <?php endif; ?>
+                        </div>
 
-                            <div class="col-md-8">
-                                <div id="winnersContainer" class="mt-4"></div>
-                                <button id="endGiveaway" class="btn btn-danger mt-4">End Giveaway</button>
-                            </div>
+                        <div class="col-md-8">
+                            <div id="winnersContainer" class="mt-4"></div>
+                            <button id="endGiveaway" class="btn btn-danger mt-4">End Giveaway</button>
                         </div>
                     </div>
-
-                    <!-- ... [The rest of the HTML and JS script from above without changes] ... -->
-
-
-
                 </div>
 
             </div>
@@ -338,52 +334,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <script src="../js/demo/chart-pie-demo.js"></script>
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-        $('#selectWinners').on('click', function() {
-            $.post('', {}, function(response) {
-                if (response.success) {
-                    // Display winners in a table
-                    let winnersTable = '<table class="table table-bordered">';
-                    winnersTable +=
-                        '<thead><tr><th>Name</th><th>Email</th><th>Contact No</th></tr></thead><tbody>';
-                    response.winners.forEach(winner => {
+            $('#selectWinners').on('click', function () {
+                $.post('', {}, function (response) {
+                    if (response.success) {
+                        // Display winners in a table
+                        let winnersTable = '<table class="table table-bordered">';
                         winnersTable +=
-                            `<tr><td>${winner.name}</td><td>${winner.email}</td><td>${winner.contact_no}</td></tr>`;
-                    });
-                    winnersTable += '</tbody></table>';
-                    $('#winnersContainer').html(winnersTable);
-                } else {
-                    alert('Error selecting winners.');
-                }
-            }, 'json');
-        });
-        $('#endGiveaway').on('click', function() {
-            Swal.fire({
-                title: 'End Giveaway?',
-                text: "Have you noted down the winners? This action will remove the giveaway!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, end it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Make an AJAX request to end the giveaway
-                    $.post('end_giveaway.php', {}, function(response) {
-                        if (response.success) {
-                            Swal.fire(
-                                'Ended!',
-                                'The giveaway has been ended.',
-                                'success'
-                            ).then(() => {
-                                location.reload(); // Reload the page
-                            });
-                        } else {
-                            alert('Error ending the giveaway.');
-                        }
-                    }, 'json');
-                }
+                            '<thead><tr><th>Name</th><th>Email</th><th>Contact No</th></tr></thead><tbody>';
+                        response.winners.forEach(winner => {
+                            winnersTable +=
+                                `<tr><td>${winner.name}</td><td>${winner.email}</td><td>${winner.contact_no}</td></tr>`;
+                        });
+                        winnersTable += '</tbody></table>';
+                        $('#winnersContainer').html(winnersTable);
+                    } else {
+                        alert('Error selecting winners.');
+                    }
+                }, 'json');
             });
-        });
+            $('#endGiveaway').on('click', function () {
+                Swal.fire({
+                    title: 'End Giveaway?',
+                    text: "Have you noted down the winners? This action will remove the giveaway!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, end it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Make an AJAX request to end the giveaway
+                        $.post('end_giveaway.php', {}, function (response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'Ended!',
+                                    'The giveaway has been ended.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload(); // Reload the page
+                                });
+                            } else {
+                                alert('Error ending the giveaway.');
+                            }
+                        }, 'json');
+                    }
+                });
+            });
         </script>
 </body>
 
