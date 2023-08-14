@@ -5,41 +5,55 @@ include './php/connection.php';
 $error_message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $first_name = $_POST['first_name'];
-  $last_name = $_POST['last_name'];
-  $email = $_POST['email'];
-  $password = $_POST['password'];
-  $confirm_password = $_POST['confirm_password'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
 
-  if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password)) {
-    $error_message = 'Please fill in all fields.';
-  } else {
-    if ($password !== $confirm_password) {
-      $error_message = 'Passwords do not match.';
+    if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password)) {
+        $error_message = 'Please fill in all fields.';
     } else {
+        if ($password !== $confirm_password) {
+            $error_message = 'Passwords do not match.';
+        } else {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-      $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            // Generate a unique verification token
+            $token = bin2hex(random_bytes(50));
 
-      $stmt = $conn->prepare("INSERT INTO tbl_user (first_name, last_name, email, password) VALUES (?, ?, ?, ?)");
-      $stmt->bind_param("ssss", $first_name, $last_name, $email, $hashed_password);
+            $stmt = $conn->prepare("INSERT INTO tbl_user (first_name, last_name, email, password, token, is_verified) VALUES (?, ?, ?, ?, ?, 0)");
+            $stmt->bind_param("sssss", $first_name, $last_name, $email, $hashed_password, $token);
 
-      if ($stmt->execute()) {
-        echo "<script>alert('Registration successful');</script>";
-        header("Location: login.php");
-      } else {
-        $error_message = 'There was an error registering the user.';
-      }
+            if ($stmt->execute()) {
+                // Send verification email
+                $to = $email;
+                $subject = "Email Verification for Garba.ca";
+                $message = "Click the link below to verify your email:\n";
+                $message .= "http://localhost/garba.ca/verify_email.php?token=" . $token;
+                $headers = "From: adminsupport@garba.ca\r\n";
 
-      $stmt->close();
+                if(mail($to, $subject, $message, $headers)) {
+                    echo "<script>alert('Registration successful. Please check your email to verify.');</script>";
+                } else {
+                    $error_message = 'There was an error sending the verification email.';
+                }
+
+            } else {
+                $error_message = 'There was an error registering the user.';
+            }
+
+            $stmt->close();
+        }
     }
-  }
 
-  if (!empty($error_message)) {
-    echo "<script>alert('{$error_message}');</script>";
-  }
+    if (!empty($error_message)) {
+        echo "<script>alert('{$error_message}');</script>";
+    }
 }
-
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">

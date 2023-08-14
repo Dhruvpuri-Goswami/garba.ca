@@ -25,12 +25,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($user) {
         if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['first_name'];
-            $_SESSION['logged_in'] = true;
-
-            header("Location: ./user/user_dashboard.php");
-            exit;
+            if ($user['is_verified'] == 0) {
+                $error_message = "Please verify your email before logging in.";
+                echo "<script>alert('{$error_message}');</script>";
+            } else {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['first_name'];
+                $_SESSION['logged_in'] = true;
+                header("Location: ./user/user_dashboard.php");
+                exit;
+            }
         } else {
             $error_message = "Incorrect password.";
             echo "<script>alert('{$error_message}');</script>";
@@ -46,6 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
