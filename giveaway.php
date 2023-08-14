@@ -45,7 +45,7 @@ if (isset($_POST['submit_form'])) {
 
                     // Execute the statement
                     if ($stmt->execute()) {
-                        echo "<script>alert('Data inserted successfully!'); window.location.href = 'index.php';
+                        echo "<script>alert('Thanks for participating!'); window.location.href = 'index.php';
                         </script>";
                     } else {
                         echo "<script>alert('Error: " . $stmt->error . "');</script>";
