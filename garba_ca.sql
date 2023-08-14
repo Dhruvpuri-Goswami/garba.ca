@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 10, 2023 at 07:18 AM
+-- Generation Time: Aug 14, 2023 at 08:21 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -38,7 +38,8 @@ CREATE TABLE `tbl_artist` (
 --
 
 INSERT INTO `tbl_artist` (`id`, `event_id`, `artist_name`) VALUES
-(4, 27, 'Aishwarya Majmudar');
+(27, 32, 'Aishwarya Majmudar'),
+(28, 33, 'Pramesh Nandi');
 
 -- --------------------------------------------------------
 
@@ -57,8 +58,10 @@ CREATE TABLE `tbl_contact` (
 --
 
 INSERT INTO `tbl_contact` (`id`, `event_id`, `contact_no`) VALUES
-(9, 27, '6479397750'),
-(10, 27, '4372692108');
+(53, 32, '6479397750'),
+(54, 32, '4372692108'),
+(55, 33, '6473093939'),
+(56, 33, '6475819773');
 
 -- --------------------------------------------------------
 
@@ -72,7 +75,7 @@ CREATE TABLE `tbl_event` (
   `event_host` varchar(40) NOT NULL,
   `event_venue` varchar(60) NOT NULL,
   `event_poster` varchar(400) NOT NULL,
-  `event_sponsor` varchar(60) NOT NULL,
+  `event_sponsor` varchar(60) DEFAULT NULL,
   `gmail` varchar(50) NOT NULL,
   `event_price` varchar(5) NOT NULL,
   `event_start_date` date NOT NULL,
@@ -80,49 +83,69 @@ CREATE TABLE `tbl_event` (
   `event_start_time` time NOT NULL,
   `event_end_time` time NOT NULL,
   `event_desc` varchar(255) NOT NULL,
-  `request_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  `status` varchar(2) NOT NULL DEFAULT '0',
+  `is_complete` varchar(1) NOT NULL DEFAULT '0',
+  `is_featured` varchar(1) NOT NULL DEFAULT '0',
+  `give_away` varchar(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_event`
 --
 
-INSERT INTO `tbl_event` (`event_id`, `event_name`, `event_host`, `event_venue`, `event_poster`, `event_sponsor`, `gmail`, `event_price`, `event_start_date`, `event_end_date`, `event_start_time`, `event_end_time`, `event_desc`, `request_id`) VALUES
-(27, 'Rangtaali', 'The Weekenders and Sankalp Canada', 'At Pearson Convention Center, Brampton', 'file_images/garba1.jpg', 'Mayur Shah & Amit Baroliya', 'sankalp@gmail.com', '40', '2023-09-09', '2023-09-10', '21:00:00', '00:00:00', 'We are thrilled to invite you to our Garba Night, a traditional dance celebration from the heart of Gujarat! Immerse yourself in the vibrant rhythms of dhol beats and dance the night away.', 4);
+INSERT INTO `tbl_event` (`event_id`, `event_name`, `event_host`, `event_venue`, `event_poster`, `event_sponsor`, `gmail`, `event_price`, `event_start_date`, `event_end_date`, `event_start_time`, `event_end_time`, `event_desc`, `user_id`, `status`, `is_complete`, `is_featured`, `give_away`) VALUES
+(32, 'Rangtaali Garba Night', 'The Weekenders and Sankalp Canada', 'At Pearson Convention Center, Brampton', '../file_images/64da592c422b3-garba1.jpg', 'Mayur Shah &amp; Amit Baroliya', 'sankalp@gmail.com', '55', '2023-08-15', '2023-08-18', '22:10:00', '12:10:00', 'Best event in canada', 1, '1', '0', '0', '0'),
+(33, 'Raas Garba', 'SWAR GUNJAN MUSIC ACADEMY', 'Canada Event Centre', '../file_images/64da5a9bdecf9-garbaimg.jpg', 'Shree Ram Entertainment', 'swargunjan@gmail.com', '60', '2023-08-18', '2023-08-19', '19:16:00', '23:16:00', 'Best garba event in canada', 1, '1', '0', '0', '0');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tbl_request`
+-- Table structure for table `tbl_giveaway`
 --
 
-CREATE TABLE `tbl_request` (
-  `request_id` int(11) NOT NULL,
-  `first_name` varchar(40) NOT NULL,
-  `last_name` varchar(40) NOT NULL,
-  `phone_no` varchar(10) NOT NULL,
-  `email_id` varchar(60) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `request_date` date NOT NULL,
-  `status` varchar(2) NOT NULL DEFAULT '0'
+CREATE TABLE `tbl_giveaway` (
+  `id` int(11) NOT NULL,
+  `name` varchar(60) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `contact_no` varchar(10) NOT NULL,
+  `event_id` int(11) NOT NULL,
+  `is_winner` varchar(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tbl_request`
+-- Dumping data for table `tbl_giveaway`
 --
 
-INSERT INTO `tbl_request` (`request_id`, `first_name`, `last_name`, `phone_no`, `email_id`, `description`, `request_date`, `status`) VALUES
-(4, 'Dhruv', 'Goswami', '1234567895', 'dhruv@gmail.com', 'I want to register my event..', '2023-08-07', '1'),
-(5, 'John', 'Doe', '9876543210', 'john.doe@example.com', 'Event registration', '2023-08-01', '1'),
-(6, 'Jane', 'Smith', '9876543211', 'jane.smith@example.com', 'Need help with event', '2023-08-02', '1'),
-(7, 'Alice', 'Johnson', '9876543212', 'alice.johnson@example.com', 'Event inquiry', '2023-08-03', '0'),
-(8, 'Bob', 'Williams', '9876543213', 'bob.williams@example.com', 'Event volunteer signup', '2023-08-04', '0'),
-(9, 'Emma', 'Miller', '9876543214', 'emma.miller@example.com', 'Event sponsor information', '2023-08-05', '1'),
-(10, 'Michael', 'Brown', '9876543215', 'michael.brown@example.com', 'Event logistics', '2023-08-06', '0'),
-(11, 'Sophia', 'Lee', '9876543216', 'sophia.lee@example.com', 'Event venue booking', '2023-08-07', '1'),
-(12, 'James', 'Kim', '9876543217', 'james.kim@example.com', 'Event ticket purchase', '2023-08-08', '0'),
-(13, 'Olivia', 'Chen', '9876543218', 'olivia.chen@example.com', 'Event schedule information', '2023-08-09', '0'),
-(14, 'Daniel', 'Nguyen', '9876543219', 'daniel.nguyen@example.com', 'Event speaker details', '2023-08-10', '-1');
+INSERT INTO `tbl_giveaway` (`id`, `name`, `email`, `contact_no`, `event_id`, `is_winner`) VALUES
+(3, 'Home Town', 'official.webprojects@gmail.com', '0123456785', 29, '1'),
+(4, 'Dhruv Goswami', 'dhruv@gmail.com', '0123456789', 29, '1'),
+(5, 'Goswami Jogendrapuri', 'goswamidj16@gmail.com', '0123456789', 29, '1'),
+(6, 'Chetan', 'chetan@gmail.com', '8572638963', 29, '1'),
+(7, 'Raj ', 'raj@gmail.com', '4561238789', 29, '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_user`
+--
+
+CREATE TABLE `tbl_user` (
+  `id` int(11) NOT NULL,
+  `first_name` varchar(40) NOT NULL,
+  `last_name` varchar(40) NOT NULL,
+  `email` varchar(60) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `is_verified` varchar(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_user`
+--
+
+INSERT INTO `tbl_user` (`id`, `first_name`, `last_name`, `email`, `password`, `token`, `is_verified`) VALUES
+(6, 'Dhruv', 'Goswami', 'goswamidj16@gmail.com', '$2y$10$IC.s/ldqfFxmBhl.rlcIN.cujE97S2YuQTnWw.6qMRXQFVwavjJGm', 'c385f61dc3aa31fcd65921084fcff06287ef4c15667edee4b3d0aa433aa625907814bd0e1adc720670118cccb723a78d16d8', '1');
 
 --
 -- Indexes for dumped tables
@@ -149,10 +172,16 @@ ALTER TABLE `tbl_event`
   ADD PRIMARY KEY (`event_id`);
 
 --
--- Indexes for table `tbl_request`
+-- Indexes for table `tbl_giveaway`
 --
-ALTER TABLE `tbl_request`
-  ADD PRIMARY KEY (`request_id`);
+ALTER TABLE `tbl_giveaway`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tbl_user`
+--
+ALTER TABLE `tbl_user`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -162,25 +191,31 @@ ALTER TABLE `tbl_request`
 -- AUTO_INCREMENT for table `tbl_artist`
 --
 ALTER TABLE `tbl_artist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `tbl_contact`
 --
 ALTER TABLE `tbl_contact`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `tbl_event`
 --
 ALTER TABLE `tbl_event`
-  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `event_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
--- AUTO_INCREMENT for table `tbl_request`
+-- AUTO_INCREMENT for table `tbl_giveaway`
 --
-ALTER TABLE `tbl_request`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+ALTER TABLE `tbl_giveaway`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `tbl_user`
+--
+ALTER TABLE `tbl_user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
