@@ -29,7 +29,7 @@ if (isset($_POST['submit'])) {
         $tempname = $_FILES["event_poster"]["tmp_name"];
         
         $unique_filename = uniqid() . "-" . $filename;
-        $folder_name = "file_images/" . $unique_filename;
+        $folder_name = "../file_images/" . $unique_filename;
         
         
         move_uploaded_file($tempname, $folder_name);
